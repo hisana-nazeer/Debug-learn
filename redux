@@ -1,0 +1,40 @@
+### Firebase Google Login Button Stuck – Problem & Solution
+
+#### Problem
+While implementing Google login using Firebase in a Next.js app, the login button was stuck displaying **"Signing in..."** even after the user successfully logged in.
+
+Key observations:
+- Firebase console confirmed the user was signed in.
+- `onAuthStateChanged` in the `AuthProvider` initially did not trigger console logs.
+- Using `finally { setLoading(false) }` did **not** fix the button text.
+- The app uses **Next.js App Router**, so proper client/server boundaries are important.
+
+---
+
+#### Solution
+The root cause was that the button text relied **only on the local `loading` state**. This state only indicates that the login process is in progress, and does **not** reflect the actual authentication status.
+
+**Fix steps:**
+1. Use **Redux** (or context) to store the authenticated user.
+2. Access the user via `useSelector`:
+
+```ts
+const user = useSelector((store: any) => store.user);
+Update the button text and disabled state based on the auth state, not just loading:
+
+<button
+  onClick={handleGoogleLogin}
+  disabled={loading || !!user}
+  className="w-full rounded bg-white text-black py-3 text-lg font-semibold hover:bg-gray-200 transition disabled:opacity-60"
+>
+  {user
+    ? "Signed in"
+    : loading
+    ? "Signing in..."
+    : "Continue with Google"}
+</button>
+
+
+error code (earlier code):{loading:"Signed in"? "Signed out"}
+
+Prevents multiple clicks while already signed in.

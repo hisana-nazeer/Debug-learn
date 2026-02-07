@@ -1,0 +1,58 @@
+const MainContainer = () => {
+  
+  const movies = useSelector((store: any) => store.movies.nowPlayingMovies)
+  console.log("movies ", movies)
+  
+
+  
+  return (
+    <div>
+    
+    </div>
+  )
+}
+
+const moviesSlice= createSlice({
+    name:"movies",
+    initialState:{
+        nowPlayingMovies:null,
+    },
+    reducers:{
+        addNowPlayingMovies:(state, action)=>{
+            state.nowPlayingMovies=action.payload;
+        }
+    }
+    
+})
+## bug: i am getting null in the console.but i have written code to fetch movies from store using useSelector, but 
+getting o/p:movies:null
+
+concepts I learned: Only after rendering does this happen:
+
+useEffect runs
+
+API request starts
+
+Network responds
+
+dispatch happens
+
+Redux state changes
+
+React re-renders
+
+So the first render is not a bug. It is the only possible behavior.Rendering is synchronous and immediate
+
+Effects (useEffect) run after render
+
+Async work always finishes later
+
+Redux just reflects that reality.
+
+Think of it like this:
+
+Render = “What do we know right now?”
+
+Effect = “Go find out more”
+
+solution: 
